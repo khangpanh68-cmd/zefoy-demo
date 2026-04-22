@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Zefoy Style Demo</title>
+
+<style>
+body {
+    background: #020617;
+    font-family: Arial;
+    color: #0ff;
+    text-align: center;
+}
+
+.container {
+    margin-top: 60px;
+}
+
+h1 {
+    color: #0ff;
+    text-shadow: 0 0 10px #0ff;
+}
+
+input {
+    padding: 10px;
+    width: 280px;
+    border-radius: 8px;
+    border: none;
+    margin: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #0ff;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.progress {
+    width: 300px;
+    height: 20px;
+    background: #111;
+    margin: 20px auto;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    width: 0%;
+    background: #0ff;
+}
+
+.stats {
+    margin-top: 20px;
+}
+
+.cooldown {
+    color: red;
+    margin-top: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+    <h1>ZEFOY DEMO PRO</h1>
+
+    <input type="text" id="link" placeholder="Dán link TikTok"><br>
+
+    <!-- Captcha giả -->
+    <p id="captchaQ"></p>
+    <input type="text" id="captchaA" placeholder="Nhập captcha"><br>
+
+    <button onclick="start()">Tăng View</button>
+
+    <div class="progress">
+        <div class="bar" id="bar"></div>
+    </div>
+
+    <p id="status"></p>
+    <p class="cooldown" id="cooldown"></p>
+
+    <div class="stats">
+        ❤️ Like: <span id="like">1000</span><br>
+        👁 View: <span id="view">5000</span>
+    </div>
+</div>
+
+<script>
+// ===== CAPTCHA =====
+let a = Math.floor(Math.random()*10);
+let b = Math.floor(Math.random()*10);
+document.getElementById("captchaQ").innerText = `Captcha: ${a} + ${b} = ?`;
+
+let locked = false;
+
+// ===== START =====
+function start() {
+    if (locked) return;
+
+    let ans = document.getElementById("captchaA").value;
+    if (parseInt(ans) !== (a + b)) {
+        alert("Sai captcha!");
+        return;
+    }
+
+    let bar = document.getElementById("bar");
+    let status = document.getElementById("status");
+
+    let width = 0;
+    status.innerText = "Đang xử lý...";
+
+    let interval = setInterval(() => {
+        if (width >= 100) {
+            clearInterval(interval);
+            status.innerText = "Thành công +1000 views (demo)";
+            startCooldown();
+        } else {
+            width++;
+            bar.style.width = width + "%";
+        }
+    }, 25);
+}
+
+// ===== COOLDOWN =====
+function startCooldown() {
+    locked = true;
+    let time = 30;
+    let cd = document.getElementById("cooldown");
+
+    let timer = setInterval(() => {
+        cd.innerText = "Chờ: " + time + "s";
+        time--;
+
+        if (time < 0) {
+            clearInterval(timer);
+            cd.innerText = "";
+            locked = false;
+
+            // reset captcha
+            a = Math.floor(Math.random()*10);
+            b = Math.floor(Math.random()*10);
+            document.getElementById("captchaQ").innerText = `Captcha: ${a} + ${b} = ?`;
+        }
+    }, 1000);
+}
+
+// ===== FAKE REALTIME STATS =====
+setInterval(() => {
+    let like = document.getElementById("like");
+    let view = document.getElementById("view");
+
+    like.innerText = parseInt(like.innerText) + Math.floor(Math.random()*5);
+    view.innerText = parseInt(view.innerText) + Math.floor(Math.random()*20);
+}, 2000);
+
+</script>
+
+</body>
+</html>
