@@ -1,166 +1,227 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<title>Zefoy Style Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duy Khang ❤️ Phương Anh - Version 10.0</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: #000;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
 
-<style>
-body {
-    background: #020617;
-    font-family: Arial;
-    color: #0ff;
-    text-align: center;
-}
+        :root {
+            --bg-image: url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000&auto=format&fit=crop');
+            --primary-pink: #ff4d6d;
+        }
 
-.container {
-    margin-top: 60px;
-}
+        /* --- MÀN HÌNH CHỜ (LOADING) --- */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), var(--bg-image);
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+            transition: opacity 1.2s ease;
+        }
 
-h1 {
-    color: #0ff;
-    text-shadow: 0 0 10px #0ff;
-}
+        .btn-start {
+            padding: 15px 40px; font-size: 1.2rem; background: var(--primary-pink);
+            color: white; border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 20px var(--primary-pink); font-weight: bold;
+            animation: pulse 2s infinite; display: none;
+        }
 
-input {
-    padding: 10px;
-    width: 280px;
-    border-radius: 8px;
-    border: none;
-    margin: 10px;
-}
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
 
-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    background: #0ff;
-    color: black;
-    cursor: pointer;
-    font-weight: bold;
-}
+        /* --- NỘI DUNG CHÍNH --- */
+        #main-content {
+            opacity: 0; display: none; width: 100%; height: 100%;
+            transition: opacity 2s ease;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.85)), var(--bg-image);
+            background-size: cover; background-position: center;
+        }
 
-.progress {
-    width: 300px;
-    height: 20px;
-    background: #111;
-    margin: 20px auto;
-    border-radius: 10px;
-    overflow: hidden;
-}
+        .message-box {
+            position: absolute; top: 48%; left: 50%;
+            transform: translate(-50%, -50%); text-align: center;
+            z-index: 10; width: 88%; pointer-events: none;
+        }
 
-.bar {
-    height: 100%;
-    width: 0%;
-    background: #0ff;
-}
+        .couple-name {
+            color: var(--primary-pink); font-size: 2.2rem; margin-bottom: 20px;
+            text-shadow: 0 0 30px var(--primary-pink); font-weight: bold;
+        }
 
-.stats {
-    margin-top: 20px;
-}
+        .romantic-box {
+            color: #fff; font-size: 1.1rem; line-height: 1.8;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
+            padding: 30px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
 
-.cooldown {
-    color: red;
-    margin-top: 10px;
-}
-</style>
+        .days-count {
+            color: #ff8fa3; font-weight: bold; font-size: 1.3rem; margin-top: 25px; display: block;
+        }
 
+        #music-control {
+            position: fixed; bottom: 30px; right: 30px; z-index: 100;
+            background: var(--primary-pink); width: 55px; height: 55px;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-size: 24px; box-shadow: 0 0 20px var(--primary-pink);
+        }
+
+        .rotating { animation: spin 4s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        #doraemon { position: absolute; width: 55px; z-index: 20; pointer-events: none; filter: drop-shadow(0 0 10px #fff); }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+    </style>
 </head>
+<body onclick="handleGlobalClick(event)">
 
-<body>
+    <audio id="bg-music" loop>
+        <source src="./nhac.mp3" type="audio/mpeg">
+    </audio>
 
-<div class="container">
-    <h1>ZEFOY DEMO PRO</h1>
+    <div id="music-control" onclick="toggleMusic(event)">🎵</div>
 
-    <input type="text" id="link" placeholder="Dán link TikTok"><br>
-
-    <!-- Captcha giả -->
-    <p id="captchaQ"></p>
-    <input type="text" id="captchaA" placeholder="Nhập captcha"><br>
-
-    <button onclick="start()">Tăng View</button>
-
-    <div class="progress">
-        <div class="bar" id="bar"></div>
+    <div id="loader">
+        <div id="loading-text" style="color: white; margin-bottom: 20px; font-style: italic; text-align: center;">
+            Đang thắp sáng yêu thương...<br>Duy Khang ❤️ Phương Anh
+        </div>
+        <button class="btn-start" id="start-btn" onclick="startExperience()">Nhận quà ngay ❤️</button>
     </div>
 
-    <p id="status"></p>
-    <p class="cooldown" id="cooldown"></p>
-
-    <div class="stats">
-        ❤️ Like: <span id="like">1000</span><br>
-        👁 View: <span id="view">5000</span>
+    <div id="main-content">
+        <img id="doraemon" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Y5Z3Y5Z3Y5Z3Y5Z3Y5Z3Y5Z3Y5Z3Y5Z3Y5Z3Y5Z3YmZfPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/v6aOebdGHtzpG57M9p/giphy.gif">
+        <div class="message-box">
+            <div class="couple-name">Duy Khang ❤️ Phương Anh</div>
+            <div class="romantic-box" id="wish-box"></div>
+            <div class="days-count" id="days-box"></div>
+        </div>
+        <canvas id="canvas"></canvas>
     </div>
-</div>
 
-<script>
-// ===== CAPTCHA =====
-let a = Math.floor(Math.random()*10);
-let b = Math.floor(Math.random()*10);
-document.getElementById("captchaQ").innerText = `Captcha: ${a} + ${b} = ?`;
+    <script>
+        const music = document.getElementById('bg-music');
+        const mBtn = document.getElementById('music-control');
+        const main = document.getElementById('main-content');
+        const loader = document.getElementById('loader');
+        let interaction = false;
 
-let locked = false;
+        const startDate = new Date(2023, 0, 21); // 21/01/2023
 
-// ===== START =====
-function start() {
-    if (locked) return;
+        // Hiện nút sau khi load dữ liệu xong
+        setTimeout(() => {
+            document.getElementById('loading-text').style.display = 'none';
+            document.getElementById('start-btn').style.display = 'block';
+        }, 2000);
 
-    let ans = document.getElementById("captchaA").value;
-    if (parseInt(ans) !== (a + b)) {
-        alert("Sai captcha!");
-        return;
-    }
-
-    let bar = document.getElementById("bar");
-    let status = document.getElementById("status");
-
-    let width = 0;
-    status.innerText = "Đang xử lý...";
-
-    let interval = setInterval(() => {
-        if (width >= 100) {
-            clearInterval(interval);
-            status.innerText = "Thành công +1000 views (demo)";
-            startCooldown();
-        } else {
-            width++;
-            bar.style.width = width + "%";
+        function startExperience() {
+            // "Mở khóa" âm nhạc thông qua tương tác người dùng
+            music.play().then(() => {
+                mBtn.classList.add('rotating');
+            }).catch(e => console.log("Lỗi nhạc:", e));
+            
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+                main.style.display = 'block';
+                setTimeout(() => {
+                    main.style.opacity = '1';
+                    interaction = true;
+                    displayPoem();
+                    moveMon();
+                    updateDays();
+                }, 100);
+            }, 1000);
         }
-    }, 25);
-}
 
-// ===== COOLDOWN =====
-function startCooldown() {
-    locked = true;
-    let time = 30;
-    let cd = document.getElementById("cooldown");
-
-    let timer = setInterval(() => {
-        cd.innerText = "Chờ: " + time + "s";
-        time--;
-
-        if (time < 0) {
-            clearInterval(timer);
-            cd.innerText = "";
-            locked = false;
-
-            // reset captcha
-            a = Math.floor(Math.random()*10);
-            b = Math.floor(Math.random()*10);
-            document.getElementById("captchaQ").innerText = `Captcha: ${a} + ${b} = ?`;
+        function handleGlobalClick(e) {
+            if (interaction) createExplosion(e.clientX, e.clientY);
         }
-    }, 1000);
-}
 
-// ===== FAKE REALTIME STATS =====
-setInterval(() => {
-    let like = document.getElementById("like");
-    let view = document.getElementById("view");
+        function toggleMusic(e) {
+            e.stopPropagation();
+            if (music.paused) { music.play(); mBtn.classList.add('rotating'); }
+            else { music.pause(); mBtn.classList.remove('rotating'); }
+        }
 
-    like.innerText = parseInt(like.innerText) + Math.floor(Math.random()*5);
-    view.innerText = parseInt(view.innerText) + Math.floor(Math.random()*20);
-}, 2000);
+        function displayPoem() {
+            const box = document.getElementById('wish-box');
+            const lines = [
+                "Ngàn ngày qua tình mình vẫn vẹn nguyên,",
+                "Duy Khang này nguyện yêu em mãi mãi.",
+                "Dẫu cho sóng gió hay nắng mưa,",
+                "Anh vẫn sẽ lo cho Phương Anh cả cuộc đời này! ❤️"
+            ];
+            let i = 0;
+            function type() {
+                if (i < lines.length) {
+                    let s = document.createElement('div');
+                    s.style.fontStyle = 'italic';
+                    s.style.marginBottom = '10px';
+                    s.innerHTML = lines[i];
+                    box.appendChild(s);
+                    i++;
+                    setTimeout(type, 1500);
+                }
+            }
+            type();
+        }
 
-</script>
+        function updateDays() {
+            const diff = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
+            document.getElementById('days-box').innerHTML = `Bên nhau ${diff} ngày hạnh phúc ❤️`;
+        }
 
+        function moveMon() {
+            let a = 0;
+            function step() {
+                const x = (window.innerWidth/2) + Math.cos(a) * (window.innerWidth*0.42) - 27;
+                const y = (window.innerHeight/2) + Math.sin(a) * (window.innerHeight*0.42) - 27;
+                const mon = document.getElementById('doraemon');
+                mon.style.left = x + 'px'; mon.style.top = y + 'px';
+                mon.style.transform = `scaleX(${Math.cos(a) > 0 ? -1 : 1})`;
+                a += 0.01; requestAnimationFrame(step);
+            }
+            step();
+        }
+
+        // CANVAS FIREWORKS
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let parts = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.onresize = resize; resize();
+
+        class Part {
+            constructor(x, y, isH) {
+                this.x = x; this.y = y; this.isH = isH;
+                const ang = Math.random() * Math.PI * 2;
+                const s = isH ? Math.random() * 2 + 1 : Math.random() * 6 + 1;
+                this.vx = Math.cos(ang) * s; this.vy = Math.sin(ang) * s;
+                this.a = 1;
+            }
+            draw() {
+                ctx.globalAlpha = this.a;
+                if(this.isH) { ctx.font = "20px Arial"; ctx.fillText("❤️", this.x, this.y); }
+                else { ctx.fillStyle = "#ff4d6d"; ctx.beginPath(); ctx.arc(this.x, this.y, 2.5, 0, 7); ctx.fill(); }
+            }
+            update() { this.x += this.vx; this.y += this.vy; this.a -= 0.015; }
+        }
+
+        function createExplosion(x, y) { for(let i=0; i<10; i++) parts.push(new Part(x, y, true)); }
+
+        function loop() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            parts.forEach((p, i) => { p.update(); p.draw(); if(p.a <= 0) parts.splice(i, 1); });
+            if(Math.random() < 0.04) parts.push(new Part(Math.random()*canvas.width, canvas.height + 10, false));
+            requestAnimationFrame(loop);
+        }
+        loop();
+    </script>
 </body>
 </html>
